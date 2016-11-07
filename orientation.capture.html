@@ -23,11 +23,11 @@
         var id = e.myID
         var encode = eventBatcher.encode(250)
 
-        encode.handle( batch => {
+        encode.handle( function(batch) {
           channel.trigger('client-orientation', batch)
         })
 
-        window.addEventListener('deviceorientation', e => {
+        window.addEventListener('deviceorientation', function(e) {
           encode({
             id: id,
             alpha: e.alpha,
