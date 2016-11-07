@@ -1,0 +1,27 @@
+{
+  "name": "event-batcher",
+  "description": "A thing for batching events smoothly",
+  "main": "dist/event-batcher.js",
+  "authors": [
+    "Ben Foxall"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/benfoxall/event-batcher",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "26a1e1cf3f",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "26a1e1cf3ff65a1c569dec159c2e6150c36dcb0d"
+  },
+  "_source": "https://github.com/benfoxall/event-batcher.git",
+  "_target": "*",
+  "_originalSource": "event-batcher",
+  "_direct": true
+}
