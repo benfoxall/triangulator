@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>orientation viewer</title>
+    <style media="screen"> h3 {font-family: sans-serif; white-space: pre} </style>
+  </head>
+  <body>
+    <h3 id="data">{}</h3>
+    <script src="bower_components/pusher-websocket-iso/dist/web/pusher.js"></script>
+    <script src="bower_components/event-batcher/dist/event-batcher.js"></script>
+    <script type="text/javascript">
+
+      var pusher = new Pusher('da3a7e68e674c1b7362c', {
+        cluster: 'eu',
+        encrypted: true,
+        authEndpoint: 'https://frontier-auth.herokuapp.com/pusher/auth'
+      })
+
+      var decode = eventBatcher.decode()
+
+      decode.handle(m => {
+        console.log(m)
+        data.innerText = JSON.stringify(m, null, 2)
+      })
+
+      var channel = pusher.subscribe('presence-all-devices')
+      channel.bind('client-orientation', decode)
+
+    </script>
+
+  </body>
+</html>
