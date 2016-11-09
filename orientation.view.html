@@ -87,29 +87,11 @@
         }();
 
 
-      var alpha = p.alpha ? THREE.Math.degToRad( p.alpha ) : 0; // Z
-      var beta = p.beta ? THREE.Math.degToRad( p.beta ) : 0; // X'
-      var gamma = p.gamma ? THREE.Math.degToRad( p.gamma ) : 0; // Y''
-      var orient = 0; // TODO
-
-      var q = new THREE.Quaternion();
-      setObjectQuaternion(q, alpha, beta, gamma, orient)
-
-
-      var v = new THREE.Vector3( 3, 0, 0 ).applyQuaternion(q)
-
-      // var centre = new THREE.Mesh( geometry, material );
-      // scene.add( centre );
-
 
       var mc = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.4, transparent:true } );
       var geom = new THREE.BoxGeometry( 0.25, 0.25, 0.25 )
-      // var geom = new THREE.SphereGeometry( 0.1, 32, 32 )
 
       var point = new THREE.Mesh( geom, mc )
-      point.position.x = v.x
-      point.position.y = v.y
-      point.position.z = v.z
       scene.add( point )
 
 
@@ -130,6 +112,8 @@
         point.position.z = v.z
 
       }
+
+      putP(p)
 
 
       function render() {
