@@ -7,6 +7,8 @@
   </head>
   <body>
     <h3 id="data">{}</h3>
+    <script src="bower_components/quaternion/quaternion.js"></script>
+    <script src="lib/three.js"></script>
     <script src="bower_components/pusher-websocket-iso/dist/web/pusher.js"></script>
     <script src="bower_components/event-batcher/dist/event-batcher.js"></script>
     <script type="text/javascript">
@@ -20,12 +22,122 @@
       var decode = eventBatcher.decode()
 
       decode.handle(m => {
-        console.log(m)
+        putP(m)
         data.innerText = JSON.stringify(m, null, 2)
       })
 
       var channel = pusher.subscribe('presence-all-devices')
       channel.bind('client-orientation', decode)
+
+
+      var p = {
+        "id": "122847.897534",
+        "alpha": 6.302773773181309,
+        "beta": -4.790659457949245,
+        "gamma": 7.537956411560208
+      }
+
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+      var renderer = new THREE.WebGLRenderer({
+        antialias: true
+      });
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      document.body.appendChild( renderer.domElement );
+      renderer.setClearColor(0xeeeeee)
+      renderer.setPixelRatio(window.devicePixelRatio)
+
+      var geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
+      var material = new THREE.MeshBasicMaterial( { color: 0xaaaaaa, opacity: 0.8, transparent:true } );
+      var centre = new THREE.Mesh( geometry, material );
+      scene.add( centre );
+
+      var axisHelper = new THREE.AxisHelper( .75 )
+      scene.add( axisHelper )
+
+
+      camera.position.z = 5;
+
+
+      //controls/DeviceOrientationControls.js
+      var setObjectQuaternion = function() {
+
+          var zee = new THREE.Vector3( 0, 0, 1 );
+
+          var euler = new THREE.Euler();
+
+          var q0 = new THREE.Quaternion();
+
+          var q1 = new THREE.Quaternion( - Math.sqrt( 0.5 ), 0, 0, Math.sqrt( 0.5 ) ); // - PI/2 around the x-axis
+
+          return function( quaternion, alpha, beta, gamma, orient ) {
+
+            euler.set( beta, alpha, - gamma, 'YXZ' ); // 'ZXY' for the device, but 'YXZ' for us
+
+            quaternion.setFromEuler( euler ); // orient the device
+
+            quaternion.multiply( q1 ); // camera looks out the back of the device, not the top
+
+            quaternion.multiply( q0.setFromAxisAngle( zee, - orient ) ); // adjust for screen orientation
+
+          }
+
+        }();
+
+
+      var alpha = p.alpha ? THREE.Math.degToRad( p.alpha ) : 0; // Z
+      var beta = p.beta ? THREE.Math.degToRad( p.beta ) : 0; // X'
+      var gamma = p.gamma ? THREE.Math.degToRad( p.gamma ) : 0; // Y''
+      var orient = 0; // TODO
+
+      var q = new THREE.Quaternion();
+      setObjectQuaternion(q, alpha, beta, gamma, orient)
+
+
+      var v = new THREE.Vector3( 3, 0, 0 ).applyQuaternion(q)
+
+      // var centre = new THREE.Mesh( geometry, material );
+      // scene.add( centre );
+
+
+      var mc = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.4, transparent:true } );
+      var geom = new THREE.BoxGeometry( 0.25, 0.25, 0.25 )
+      // var geom = new THREE.SphereGeometry( 0.1, 32, 32 )
+
+      var point = new THREE.Mesh( geom, mc )
+      point.position.x = v.x
+      point.position.y = v.y
+      point.position.z = v.z
+      scene.add( point )
+
+
+      function putP(o) {
+
+        var alpha = o.alpha ? THREE.Math.degToRad( o.alpha ) : 0; // Z
+        var beta = o.beta ? THREE.Math.degToRad( o.beta ) : 0; // X'
+        var gamma = o.gamma ? THREE.Math.degToRad( o.gamma ) : 0; // Y''
+        var orient = 0; // TODO
+
+        var q = point.quaternion
+        setObjectQuaternion(q, alpha, beta, gamma, orient)
+
+        var v = new THREE.Vector3( 3, 0, 0 ).applyQuaternion(q)
+
+        point.position.x = v.x
+        point.position.y = v.y
+        point.position.z = v.z
+
+      }
+
+
+      function render() {
+        requestAnimationFrame( render )
+        scene.rotation.y += 0.001
+        renderer.render( scene, camera )
+      }
+      render()
 
     </script>
 
