@@ -53,17 +53,44 @@ var encode = function (millis) {
 var decode = function (millis) {
 
   var handlers = []
+  var queue = []
 
   var trigger = function (data) {
     handlers.forEach( function (h) { return h(data); })
   }
 
+  var polling = false
+
   var processor = function (data) {
 
     // naive approach here, don't need so many timers
-    data.forEach( function (b) {
-      setTimeout(trigger, b.t, b.e)
+    // data.forEach( function (b) {
+    //   setTimeout(trigger, b.t, b.e)
+    // })
+    // queue.push(b)
+
+    var n = now()
+    data.forEach( b => {
+      queue.push([
+        b.t + n, b.e
+      ])
     })
+
+    if(!polling) {
+      polling = true
+      requestAnimationFrame(poll)
+    }
+
+  }
+
+  function poll(n){
+
+    while(queue.length && (queue[0][0] < n)) {
+      trigger(queue.shift()[1])
+    }
+
+    if(queue.length) requestAnimationFrame(poll)
+    else polling = false
 
   }
 
