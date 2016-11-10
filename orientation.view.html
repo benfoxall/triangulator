@@ -28,8 +28,8 @@
         data.innerText = JSON.stringify(m, null, 2)
       })
 
-      var channel = pusher.subscribe('presence-all-devices')
-      channel.bind('client-orientation', decode)
+      // var channel = pusher.subscribe('presence-all-devices')
+      // channel.bind('client-orientation', decode)
 
 
       var p = {
@@ -51,7 +51,7 @@
       renderer.setClearColor(0xeeeeee)
       renderer.setPixelRatio(window.devicePixelRatio)
 
-      var geometry = new THREE.SphereGeometry( 0.3, 32, 32 );
+      var geometry = new THREE.SphereGeometry( 1, 32, 32 );
       var material = new THREE.MeshBasicMaterial( { color: 0xaaaaaa, opacity: 0.8, transparent:true } );
       var centre = new THREE.Mesh( geometry, material );
       scene.add( centre );
@@ -91,9 +91,18 @@
 
 
         var mc = new THREE.MeshBasicMaterial( { color: 0xff0088, opacity: 0.4, transparent:true, wireframe: true } );
-        var geom = new THREE.BoxGeometry( .75, .75, .75 )
-        var cube = new THREE.Mesh( geom, mc )
-        scene.add(cube)
+        var geom = new THREE.BoxGeometry( 2, .2, 4 )
+        var phone = new THREE.Mesh( geom, mc )
+        scene.add(phone)
+
+
+        var geometry = new THREE.SphereGeometry( .2, 16, 16 );
+        var material = new THREE.MeshBasicMaterial( { color: 0x0088ff, opacity: 0.8, transparent:true } );
+        var p = new THREE.Mesh( geometry, material );
+        p.position.y = 2
+        phone.add(p)
+
+
 
 
 
@@ -115,11 +124,11 @@
 
         // console.log(m)
 
-        // cube.rotation.y = - THREE.Math.degToRad(o.gamma)
-        // cube.rotation.x = THREE.Math.degToRad(o.beta)
-        // cube.rotation.z = THREE.Math.degToRad(o.alpha-180)
+        // phone.rotation.y = - THREE.Math.degToRad(o.gamma)
+        // phone.rotation.x = THREE.Math.degToRad(o.beta)
+        // phone.rotation.z = THREE.Math.degToRad(o.alpha-180)
 
-        // cube.rotation.set(
+        // phone.rotation.set(
         //   THREE.Math.degToRad(o.beta),
         //   -THREE.Math.degToRad(o.gamma),
         //   -THREE.Math.degToRad(o.alpha-180),
@@ -130,23 +139,33 @@
         // THIS ONE
         // for visualising the angle of each device in a central
         // place
-        cube.rotation.set(
+        // phone.rotation.set(
+        //   -THREE.Math.degToRad(o.beta),
+        //   THREE.Math.degToRad(o.alpha-180),
+        //   THREE.Math.degToRad(o.gamma),
+        //   'YZX'
+        // )
+
+
+        var e = new THREE.Euler(
           -THREE.Math.degToRad(o.beta),
           THREE.Math.degToRad(o.alpha-180),
           THREE.Math.degToRad(o.gamma),
+          // 'YXZ'
           'YZX'
         )
+        phone.setRotationFromEuler(e)
 
-        // cube.rotation.y = - (o.gamma)
-        // cube.rotation.x = (o.beta)
-        // cube.rotation.z = (o.alpha-180)
+        // phone.rotation.y = - (o.gamma)
+        // phone.rotation.x = (o.beta)
+        // phone.rotation.z = (o.alpha-180)
 
 // rotateY("+(-e.gamma)+"deg) rotateX("+e.beta+"deg) rotateZ("+-(e.alpha-180)+"deg)
 
-        // cube.rotation.setFromRotationMatrix(m)
+        // phone.rotation.setFromRotationMatrix(m)
 
 
-        // cube.applyMatrix(m)
+        // phone.applyMatrix(m)
         // point.rotation.setFromRotationMatrix(m)
 
         // console.log(m_data)
