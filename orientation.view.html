@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>orientation viewer</title>
-    <style media="screen"> h3 {font-family: sans-serif; white-space: pre} </style>
+    <style media="screen"> h3 {font-family: sans-serif; white-space: pre}
+    body {margin:0} h3{position: absolute}
+     </style>
   </head>
   <body>
     <h3 id="data">{}</h3>
@@ -88,6 +90,14 @@
 
 
 
+        var mc = new THREE.MeshBasicMaterial( { color: 0xff0088, opacity: 0.4, transparent:true, wireframe: true } );
+        var geom = new THREE.BoxGeometry( .75, .75, .75 )
+        var cube = new THREE.Mesh( geom, mc )
+        scene.add(cube)
+
+
+
+
       var mc = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.4, transparent:true } );
       var geom = new THREE.BoxGeometry( 0.25, 0.25, 0.25 )
 
@@ -95,21 +105,65 @@
       scene.add( point )
 
 
+
+
       function putP(o) {
 
-        var alpha = o.alpha ? THREE.Math.degToRad( o.alpha ) : 0; // Z
-        var beta = o.beta ? THREE.Math.degToRad( o.beta ) : 0; // X'
-        var gamma = o.gamma ? THREE.Math.degToRad( o.gamma ) : 0; // Y''
-        var orient = 0; // TODO
+        // var m_data = getBaseRotationMatrix(o.alpha, o.beta, o.gamma)
+        // var m = new THREE.Matrix3
+        // m.set.apply(m, m_data)
 
-        var q = point.quaternion
-        setObjectQuaternion(q, alpha, beta, gamma, orient)
+        // console.log(m)
 
-        var v = new THREE.Vector3( 3, 0, 0 ).applyQuaternion(q)
+        // cube.rotation.y = - THREE.Math.degToRad(o.gamma)
+        // cube.rotation.x = THREE.Math.degToRad(o.beta)
+        // cube.rotation.z = THREE.Math.degToRad(o.alpha-180)
 
-        point.position.x = v.x
-        point.position.y = v.y
-        point.position.z = v.z
+        // cube.rotation.set(
+        //   THREE.Math.degToRad(o.beta),
+        //   -THREE.Math.degToRad(o.gamma),
+        //   -THREE.Math.degToRad(o.alpha-180),
+        //   'YXZ'
+        // )
+
+
+        // THIS ONE
+        // for visualising the angle of each device in a central
+        // place
+        cube.rotation.set(
+          -THREE.Math.degToRad(o.beta),
+          THREE.Math.degToRad(o.alpha-180),
+          THREE.Math.degToRad(o.gamma),
+          'YXZ'
+        )
+
+        // cube.rotation.y = - (o.gamma)
+        // cube.rotation.x = (o.beta)
+        // cube.rotation.z = (o.alpha-180)
+
+// rotateY("+(-e.gamma)+"deg) rotateX("+e.beta+"deg) rotateZ("+-(e.alpha-180)+"deg)
+
+        // cube.rotation.setFromRotationMatrix(m)
+
+
+        // cube.applyMatrix(m)
+        // point.rotation.setFromRotationMatrix(m)
+
+        // console.log(m_data)
+
+        // var alpha = o.alpha ? THREE.Math.degToRad( o.alpha ) : 0; // Z
+        // var beta = o.beta ? THREE.Math.degToRad( o.beta ) : 0; // X'
+        // var gamma = o.gamma ? THREE.Math.degToRad( o.gamma ) : 0; // Y''
+        // var orient = 0; // TODO
+        //
+        // var q = point.quaternion
+        // setObjectQuaternion(q, alpha, beta, gamma, orient)
+        //
+        // var v = new THREE.Vector3( 3, 0, 0 ).applyQuaternion(q)
+        //
+        // point.position.x = v.x
+        // point.position.y = v.y
+        // point.position.z = v.z
 
       }
 
@@ -118,10 +172,15 @@
 
       function render() {
         requestAnimationFrame( render )
-        scene.rotation.y += 0.001
+        // scene.rotation.y += 0.001
         renderer.render( scene, camera )
       }
       render()
+
+      window.addEventListener('deviceorientation', e => {
+        // console.log(e)
+        putP(e)
+      })
 
     </script>
 
